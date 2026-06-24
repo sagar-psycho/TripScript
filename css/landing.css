@@ -1,0 +1,281 @@
+/*
+  TripSplit Landing Styles
+  File: css/landing.css
+
+  Architecture Decision:
+  This file only controls public landing page sections.
+  Shared tokens, buttons, typography, and form styles remain in style.css.
+*/
+
+.hero-section {
+  padding: 72px 0 88px;
+  overflow: hidden;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.hero-content h1 span {
+  display: block;
+  background: var(--color-black);
+  color: var(--color-yellow);
+  width: fit-content;
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+  transform: rotate(-1deg);
+}
+
+.hero-description {
+  max-width: 620px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 24px 0 28px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.hero-art {
+  min-height: 460px;
+  position: relative;
+}
+
+.shape {
+  position: absolute;
+  border: var(--border-heavy);
+  box-shadow: var(--shadow-heavy);
+}
+
+.shape-yellow {
+  width: 250px;
+  height: 250px;
+  background: var(--color-yellow);
+  border-radius: 42px;
+  right: 52px;
+  top: 42px;
+  transform: rotate(10deg);
+}
+
+.shape-white {
+  width: 210px;
+  height: 210px;
+  background: var(--color-white);
+  border-radius: 50%;
+  left: 28px;
+  top: 110px;
+}
+
+.shape-black {
+  width: 120px;
+  height: 120px;
+  background: var(--color-black);
+  border-radius: 28px;
+  right: 20px;
+  bottom: 52px;
+  transform: rotate(-12deg);
+}
+
+.brutal-card {
+  background: var(--color-white);
+  border: var(--border-heavy);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-heavy);
+}
+
+.floating-card {
+  position: absolute;
+  padding: 18px;
+  display: grid;
+  gap: 4px;
+  z-index: 2;
+}
+
+.floating-card strong {
+  font-family: var(--font-heading);
+  font-size: 1.65rem;
+}
+
+.floating-card span {
+  font-weight: 900;
+}
+
+.card-one {
+  left: 0;
+  top: 34px;
+}
+
+.card-two {
+  right: 38px;
+  bottom: 8px;
+}
+
+.split-circle {
+  width: 145px;
+  height: 145px;
+  position: absolute;
+  left: 185px;
+  bottom: 68px;
+  background: var(--color-white);
+  border: var(--border-heavy);
+  border-radius: 50%;
+  box-shadow: var(--shadow-heavy);
+  display: grid;
+  place-items: center;
+  z-index: 3;
+}
+
+.split-circle span {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 900;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.feature-card {
+  background: var(--color-white);
+  border: var(--border-heavy);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-heavy);
+  padding: 24px;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.feature-card:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 12px 12px 0 var(--color-black);
+}
+
+.feature-icon {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  background: var(--color-yellow);
+  border: var(--border-medium);
+  border-radius: 14px;
+  font-size: 1.7rem;
+  margin-bottom: 18px;
+}
+
+.feature-card p {
+  font-weight: 700;
+  color: var(--color-muted);
+  margin-bottom: 0;
+}
+
+.cta-section {
+  padding: 40px 0 90px;
+}
+
+.cta-card {
+  background: var(--color-white);
+  border: var(--border-heavy);
+  border-radius: 24px;
+  box-shadow: var(--shadow-heavy);
+  padding: clamp(28px, 6vw, 54px);
+  text-align: center;
+}
+
+.cta-card p {
+  max-width: 680px;
+  margin: 18px auto 28px;
+  font-weight: 700;
+}
+
+.site-footer {
+  background: var(--color-black);
+  color: var(--color-white);
+  padding: 28px 0;
+  border-top: var(--border-heavy);
+}
+
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.footer-links {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  font-weight: 800;
+}
+
+@media (max-width: 900px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-art {
+    min-height: 380px;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-inner {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 520px) {
+  .hero-section {
+    padding-top: 46px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .hero-actions .btn {
+    text-align: center;
+  }
+
+  .hero-art {
+    min-height: 330px;
+  }
+
+  .shape-yellow {
+    width: 190px;
+    height: 190px;
+    right: 20px;
+  }
+
+  .shape-white {
+    width: 160px;
+    height: 160px;
+    left: 4px;
+  }
+
+  .split-circle {
+    width: 110px;
+    height: 110px;
+    left: 120px;
+    bottom: 62px;
+  }
+
+  .floating-card {
+    padding: 14px;
+  }
+
+  .floating-card strong {
+    font-size: 1.25rem;
+  }
+}

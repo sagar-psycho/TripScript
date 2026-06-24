@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    TripSplit Notifications
+    File: notifications.html
+
+    Architecture:
+    Protected route handled by auth.js.
+    notifications.js will later manage notification reads, deletes,
+    filtering, searching, and detail rendering.
+  -->
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Notifications | TripSplit</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="stylesheet" href="./css/dashboard.css" />
+  <link rel="stylesheet" href="./css/notifications.css" />
+</head>
+
+<body>
+  <div id="toast-root" class="toast-root"></div>
+  <div class="sidebar-overlay"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="./dashboard.html" class="brand">
+          <span class="brand-mark">TS</span>
+          <span class="brand-text">TripSplit</span>
+        </a>
+
+        <button class="icon-btn mobile-only" data-mobile-menu-close>✕</button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="./dashboard.html" class="sidebar-link" data-nav-link>Dashboard</a>
+        <a href="./trips.html" class="sidebar-link" data-nav-link>Trips</a>
+        <a href="./expenses.html" class="sidebar-link" data-nav-link>Expenses</a>
+        <a href="./settlements.html" class="sidebar-link" data-nav-link>Settlements</a>
+        <a href="./reports.html" class="sidebar-link" data-nav-link>Reports</a>
+        <a href="./settings.html" class="sidebar-link" data-nav-link>Settings</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-dark" data-logout>Logout</button>
+      </div>
+    </aside>
+
+    <main class="dashboard-main notifications-main">
+      <header class="dashboard-topbar">
+        <button class="icon-btn mobile-only" data-mobile-menu-open>☰</button>
+
+        <div>
+          <p class="eyebrow">Notification Center</p>
+          <h1>Notifications</h1>
+          <p class="user-meta">
+            <span data-user-name>User</span> ·
+            <span data-user-email></span> ·
+            <strong data-user-role>member</strong>
+          </p>
+        </div>
+
+        <div class="topbar-actions">
+          <button id="markAllReadButton" class="btn btn-primary" type="button" data-mark-all-read>
+            Mark All As Read
+          </button>
+          <button class="btn btn-dark" data-logout>Logout</button>
+        </div>
+      </header>
+
+      <section class="dashboard-grid notification-stats" id="notificationStats">
+        <article class="stat-card">
+          <span>Total Notifications</span>
+          <strong id="totalNotificationsValue">0</strong>
+        </article>
+
+        <article class="stat-card">
+          <span>Unread Notifications</span>
+          <strong id="unreadNotificationsValue">0</strong>
+        </article>
+
+        <article class="stat-card">
+          <span>Read Notifications</span>
+          <strong id="readNotificationsValue">0</strong>
+        </article>
+
+        <article class="stat-card">
+          <span>Today</span>
+          <strong id="todayNotificationsValue">0</strong>
+        </article>
+      </section>
+
+      <section class="notification-toolbar">
+        <div>
+          <label for="notificationSearch">Search Notifications</label>
+          <input
+            id="notificationSearch"
+            class="form-control"
+            type="search"
+            placeholder="Search title, message, or type"
+          />
+        </div>
+
+        <div>
+          <label for="notificationTypeFilter">Filter By</label>
+          <select id="notificationTypeFilter" class="form-control">
+            <option value="all">All</option>
+            <option value="expense">Expense</option>
+            <option value="payment">Payment</option>
+            <option value="trip">Trip</option>
+            <option value="reminder">Reminder</option>
+            <option value="system">System</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="notificationStatusFilter">Status</label>
+          <select id="notificationStatusFilter" class="form-control">
+            <option value="all">All Status</option>
+            <option value="unread">Unread</option>
+            <option value="read">Read</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="notification-content-grid">
+        <div>
+          <div class="section-inline-heading">
+            <div>
+              <h2>Notification Feed</h2>
+              <p>Track trip, expense, payment, reminder, and system updates.</p>
+            </div>
+          </div>
+
+          <div id="notificationFeed" class="notification-feed">
+            <div class="dashboard-loader">Loading notifications...</div>
+          </div>
+        </div>
+
+        <aside class="panel-card">
+          <h2>Quick Actions</h2>
+
+          <div class="quick-summary">
+            <button class="btn btn-primary" type="button" data-mark-all-read>
+              Mark All As Read
+            </button>
+
+            <button class="btn btn-light" type="button" data-refresh-notifications>
+              Refresh Notifications
+            </button>
+
+            <div class="empty-state">
+              Use filters to find payment, expense, trip, reminder, or system notifications faster.
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <div id="notificationDetailModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <section class="modal-card small-modal">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Notification Detail</p>
+          <h2 id="detailNotificationTitle">Notification</h2>
+        </div>
+
+        <button class="icon-btn" type="button" data-close-notification-detail-modal>
+          ✕
+        </button>
+      </div>
+
+      <div id="notificationDetailBody" class="notification-detail-body">
+        <div class="dashboard-loader">Loading notification details...</div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="detailMarkReadButton" class="btn btn-primary" type="button" data-detail-mark-read>
+          Mark As Read
+        </button>
+
+        <button id="detailDeleteButton" class="btn btn-light" type="button" data-detail-delete-notification>
+          Delete Notification
+        </button>
+
+        <button class="btn btn-dark" type="button" data-close-notification-detail-modal>
+          Close
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <script type="module" src="./js/firebase.js"></script>
+  <script type="module" src="./js/app.js"></script>
+  <script type="module" src="./js/auth.js"></script>
+  <script type="module" src="./js/notifications.js"></script>
+</body>
+</html>

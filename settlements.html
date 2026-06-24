@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    TripSplit Settlement Management
+    File: settlements.html
+
+    Architecture:
+    Protected route handled by auth.js.
+    settlements.js will later control balances, payment recording,
+    confirmation workflow, filters, and activity rendering.
+  -->
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Settlements | TripSplit</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="stylesheet" href="./css/dashboard.css" />
+  <link rel="stylesheet" href="./css/settlements.css" />
+</head>
+
+<body>
+  <div id="toast-root" class="toast-root"></div>
+  <div class="sidebar-overlay"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="./dashboard.html" class="brand">
+          <span class="brand-mark">TS</span>
+          <span class="brand-text">TripSplit</span>
+        </a>
+
+        <button class="icon-btn mobile-only" data-mobile-menu-close>✕</button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="./dashboard.html" class="sidebar-link" data-nav-link>Dashboard</a>
+        <a href="./trips.html" class="sidebar-link" data-nav-link>Trips</a>
+        <a href="./expenses.html" class="sidebar-link" data-nav-link>Expenses</a>
+        <a href="./settlements.html" class="sidebar-link active" data-nav-link>Settlements</a>
+        <a href="./reports.html" class="sidebar-link" data-nav-link>Reports</a>
+        <a href="./settings.html" class="sidebar-link" data-nav-link>Settings</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-dark" data-logout>Logout</button>
+      </div>
+    </aside>
+
+    <main class="dashboard-main settlements-main">
+      <header class="dashboard-topbar">
+        <button class="icon-btn mobile-only" data-mobile-menu-open>☰</button>
+
+        <div>
+          <p class="eyebrow">Settlement Center</p>
+          <h1>Settlements</h1>
+          <p class="user-meta">
+            <span data-user-name>User</span> ·
+            <span data-user-email></span> ·
+            <strong data-user-role>member</strong>
+          </p>
+        </div>
+
+        <div class="topbar-actions">
+          <button id="recordPaymentButton" class="btn btn-primary member-only" data-open-payment-modal>
+            + Record Payment
+          </button>
+          <button class="btn btn-dark" data-logout>Logout</button>
+        </div>
+      </header>
+
+      <section class="dashboard-grid settlement-stats" id="settlementStats">
+        <article class="stat-card">
+          <span>Total Receivable</span>
+          <strong id="totalReceivableValue">₹0</strong>
+        </article>
+
+        <article class="stat-card">
+          <span>Total Payable</span>
+          <strong id="totalPayableValue">₹0</strong>
+        </article>
+
+        <article class="stat-card">
+          <span>Pending Confirmations</span>
+          <strong id="pendingConfirmationsValue">0</strong>
+        </article>
+
+        <article class="stat-card">
+          <span>Completed Settlements</span>
+          <strong id="completedSettlementsValue">0</strong>
+        </article>
+      </section>
+
+      <section class="settlement-toolbar">
+        <div>
+          <label for="settlementSearch">Search</label>
+          <input
+            id="settlementSearch"
+            class="form-control"
+            type="search"
+            placeholder="Search member, trip, method, or reference"
+          />
+        </div>
+
+        <div>
+          <label for="settlementTripFilter">Trip</label>
+          <select id="settlementTripFilter" class="form-control">
+            <option value="all">All Trips</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="settlementStatusFilter">Status</label>
+          <select id="settlementStatusFilter" class="form-control">
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="settlementMethodFilter">Method</label>
+          <select id="settlementMethodFilter" class="form-control">
+            <option value="all">All Methods</option>
+            <option value="UPI">UPI</option>
+            <option value="Cash">Cash</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+            <option value="Card">Card</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="settlement-content-grid">
+        <div>
+          <section class="panel-card">
+            <div class="section-inline-heading">
+              <div>
+                <h2>Member Balances</h2>
+                <p>See who owes whom after approved trip expenses.</p>
+              </div>
+            </div>
+
+            <div id="memberBalancesList" class="balance-list">
+              <article class="balance-card">
+                <strong>Rahul owes Sagar ₹625</strong>
+                <span>Sample balance preview</span>
+                <button class="btn btn-primary member-only" data-open-payment-modal>Record Payment</button>
+              </article>
+
+              <article class="balance-card">
+                <strong>Arjun owes Rahul ₹450</strong>
+                <span>Sample balance preview</span>
+                <button class="btn btn-primary member-only" data-open-payment-modal>Record Payment</button>
+              </article>
+            </div>
+          </section>
+
+          <section id="paymentConfirmationSection" class="panel-card">
+            <div class="section-inline-heading">
+              <div>
+                <h2>Payment Confirmation Queue</h2>
+                <p>Review recorded payments and confirmation status.</p>
+              </div>
+            </div>
+
+            <div id="paymentConfirmationQueue" class="confirmation-list">
+              <div class="empty-state">No pending payment confirmations.</div>
+            </div>
+          </section>
+        </div>
+
+        <aside class="panel-card">
+          <h2>Settlement Activity Timeline</h2>
+          <div id="settlementActivityTimeline" class="timeline">
+            <div class="empty-state">No settlement activity yet.</div>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <div id="paymentModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <section class="modal-card small-modal">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Record Payment</p>
+          <h2>Payment Details</h2>
+        </div>
+
+        <button class="icon-btn" type="button" data-close-payment-modal>✕</button>
+      </div>
+
+      <form id="paymentForm" novalidate>
+        <input type="hidden" id="settlementId" name="settlementId" />
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="paymentAmount">Amount</label>
+            <input
+              id="paymentAmount"
+              name="paymentAmount"
+              class="form-control"
+              type="number"
+              min="1"
+              step="0.01"
+              required
+            />
+            <small class="form-error" data-error-for="paymentAmount"></small>
+          </div>
+
+          <div class="form-group">
+            <label for="paymentMethod">Payment Method</label>
+            <select id="paymentMethod" name="paymentMethod" class="form-control" required>
+              <option value="">Select Method</option>
+              <option value="UPI">UPI</option>
+              <option value="Cash">Cash</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+              <option value="Card">Card</option>
+              <option value="Other">Other</option>
+            </select>
+            <small class="form-error" data-error-for="paymentMethod"></small>
+          </div>
+
+          <div class="form-group form-group-full">
+            <label for="referenceNumber">Reference Number</label>
+            <input
+              id="referenceNumber"
+              name="referenceNumber"
+              class="form-control"
+              type="text"
+              placeholder="UPI reference / bank transaction ID"
+              required
+            />
+            <small class="form-error" data-error-for="referenceNumber"></small>
+          </div>
+
+          <div class="form-group form-group-full">
+            <label for="paymentScreenshot">Screenshot Upload</label>
+            <input
+              id="paymentScreenshot"
+              name="paymentScreenshot"
+              class="form-control"
+              type="file"
+              accept="image/*,.pdf"
+            />
+            <small class="form-error" data-error-for="paymentScreenshot"></small>
+            <div id="paymentScreenshotPreview" class="receipt-preview hidden"></div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-light" type="button" data-close-payment-modal>Cancel</button>
+          <button id="savePaymentButton" class="btn btn-primary" type="submit">
+            Submit Payment
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <script type="module" src="./js/firebase.js"></script>
+  <script type="module" src="./js/app.js"></script>
+  <script type="module" src="./js/auth.js"></script>
+  <script type="module" src="./js/settlement.js"></script>
+</body>
+</html>

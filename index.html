@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    TripSplit Foundation
+    File: index.html
+
+    Architecture Decision:
+    This is the public landing page.
+    It does not load protected dashboard logic.
+    Authentication state is checked only to improve UX:
+    if a logged-in user visits the landing page, they can go directly to dashboard.
+  -->
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>TripSplit | Split Expenses. Not Friendships.</title>
+
+  <meta
+    name="description"
+    content="TripSplit helps groups track trip expenses, split bills, and settle payments easily."
+  />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Global Styles -->
+  <link rel="stylesheet" href="./css/style.css" />
+
+  <!-- Landing Page Styles -->
+  <link rel="stylesheet" href="./css/landing.css" />
+</head>
+
+<body>
+  <div id="toast-root" class="toast-root"></div>
+
+  <header class="site-header">
+    <nav class="navbar container">
+      <a href="./index.html" class="brand" aria-label="TripSplit Home">
+        <span class="brand-mark">TS</span>
+        <span class="brand-text">TripSplit</span>
+      </a>
+
+      <div class="nav-actions">
+        <a href="./login.html" class="btn btn-light">Login</a>
+        <a href="./register.html" class="btn btn-dark">Get Started</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <p class="eyebrow">Modern group expense sharing</p>
+
+          <h1>
+            Split Expenses.
+            <span>Not Friendships.</span>
+          </h1>
+
+          <p class="hero-description">
+            Create trips, invite friends, add expenses, calculate balances,
+            and settle payments without confusion.
+          </p>
+
+          <div class="hero-actions">
+            <a href="./register.html" class="btn btn-primary btn-large">
+              Create Trip
+            </a>
+
+            <a href="./login.html" class="btn btn-light btn-large">
+              Login
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-art" aria-hidden="true">
+          <div class="shape shape-yellow"></div>
+          <div class="shape shape-white"></div>
+          <div class="shape shape-black"></div>
+
+          <div class="brutal-card floating-card card-one">
+            <strong>₹12,450</strong>
+            <span>Total Trip Spend</span>
+          </div>
+
+          <div class="brutal-card floating-card card-two">
+            <strong>3 friends</strong>
+            <span>Need to settle</span>
+          </div>
+
+          <div class="split-circle">
+            <span>50%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature Preview -->
+    <section class="section">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Why TripSplit?</p>
+          <h2>Built for trips, groups, and clean settlements.</h2>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card">
+            <span class="feature-icon">💸</span>
+            <h3>Expense Tracking</h3>
+            <p>Record every trip expense with payer, category, date, and notes.</p>
+          </article>
+
+          <article class="feature-card">
+            <span class="feature-icon">⚖️</span>
+            <h3>Smart Split</h3>
+            <p>Split equally, by percentage, by shares, or custom amounts.</p>
+          </article>
+
+          <article class="feature-card">
+            <span class="feature-icon">🤝</span>
+            <h3>Settlements</h3>
+            <p>See who owes whom and close balances faster.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+      <div class="container">
+        <div class="cta-card">
+          <h2>Start your next trip without money confusion.</h2>
+          <p>
+            TripSplit gives your group one simple place for expenses,
+            members, balances, and settlements.
+          </p>
+
+          <a href="./register.html" class="btn btn-primary btn-large">
+            Create Free Account
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>© 2026 TripSplit. All rights reserved.</p>
+
+      <div class="footer-links">
+        <a href="./index.html">About</a>
+        <a href="./index.html">Privacy</a>
+        <a href="./index.html">Terms</a>
+        <a href="./index.html">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Firebase SDK -->
+  <script type="module" src="./js/firebase.js"></script>
+
+  <!-- Shared App Utilities -->
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

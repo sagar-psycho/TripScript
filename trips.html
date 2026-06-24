@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    TripSplit Trip Management
+    File: trips.html
+
+    Architecture Decision:
+    This is a protected route.
+    auth.js controls authentication and dispatches the authenticated user profile.
+    trip.js controls role-based trip rendering and Firestore trip workflows.
+
+    Admin users:
+    - Create trips
+    - Edit trips
+    - Archive trips
+    - Invite members
+
+    Member users:
+    - View joined trips
+    - Accept invitations
+    - View trip details
+  -->
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Trips | TripSplit</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="stylesheet" href="./css/dashboard.css" />
+  <link rel="stylesheet" href="./css/trips.css" />
+</head>
+
+<body>
+  <div id="toast-root" class="toast-root"></div>
+
+  <div class="sidebar-overlay"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="./dashboard.html" class="brand">
+          <span class="brand-mark">TS</span>
+          <span class="brand-text">TripSplit</span>
+        </a>
+
+        <button class="icon-btn mobile-only" data-mobile-menu-close aria-label="Close menu">
+          ✕
+        </button>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <a href="./dashboard.html" class="sidebar-link" data-nav-link>Dashboard</a>
+        <a href="./trips.html" class="sidebar-link active" data-nav-link>Trips</a>
+        <a href="./expenses.html" class="sidebar-link" data-nav-link>Expenses</a>
+        <a href="./settlements.html" class="sidebar-link" data-nav-link>Settlements</a>
+        <a href="./reports.html" class="sidebar-link" data-nav-link>Reports</a>
+        <a href="./settings.html" class="sidebar-link" data-nav-link>Settings</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-dark" data-logout>Logout</button>
+      </div>
+    </aside>
+
+    <main class="dashboard-main trips-main">
+      <header class="dashboard-topbar">
+        <button class="icon-btn mobile-only" data-mobile-menu-open aria-label="Open menu">
+          ☰
+        </button>
+
+        <div>
+          <p class="eyebrow">Trip Management</p>
+          <h1>Trips</h1>
+          <p class="user-meta">
+            <span data-user-name>User</span> ·
+            <span data-user-email></span> ·
+            <strong data-user-role>member</strong>
+          </p>
+        </div>
+
+        <div class="topbar-actions">
+          <button
+            id="createTripButton"
+            class="btn btn-primary admin-only hidden"
+            type="button"
+            data-open-trip-modal
+          >
+            + Create Trip
+          </button>
+
+          <button class="btn btn-dark" data-logout>
+            Logout
+          </button>
+        </div>
+      </header>
+
+      <section id="tripPageNotice" class="trip-notice hidden"></section>
+
+      <section class="trip-toolbar">
+        <div class="trip-search-wrap">
+          <label for="tripSearch">Search Trips</label>
+          <input
+            id="tripSearch"
+            class="form-control"
+            type="search"
+            placeholder="Search by trip name or destination"
+          />
+        </div>
+
+        <div class="trip-filter-wrap">
+          <label for="tripStatusFilter">Status</label>
+          <select id="tripStatusFilter" class="form-control">
+            <option value="all">All</option>
+            <option value="active">Active</option>
+            <option value="archived">Archived</option>
+          </select>
+        </div>
+      </section>
+
+      <section id="memberInvitationPanel" class="panel-card member-only hidden">
+        <div class="section-inline-heading">
+          <div>
+            <h2>Pending Invitations</h2>
+            <p>Accept trip invitations sent to your registered email.</p>
+          </div>
+          <button id="refreshInvitationsButton" class="btn btn-light" type="button">
+            Refresh
+          </button>
+        </div>
+
+        <div id="invitationList" class="invitation-list">
+          <div class="empty-state">Checking invitations...</div>
+        </div>
+      </section>
+
+      <section class="trip-content-grid">
+        <div>
+          <div class="section-inline-heading">
+            <div>
+              <h2 id="tripListTitle">All Trips</h2>
+              <p id="tripListSubtitle">Manage and view trip records.</p>
+            </div>
+          </div>
+
+          <div id="tripList" class="trip-grid">
+            <div class="dashboard-loader">Loading trips...</div>
+          </div>
+        </div>
+
+        <aside class="panel-card">
+          <h2>Activity Timeline</h2>
+          <div id="tripActivityTimeline" class="timeline">
+            <div class="empty-state">No activity yet.</div>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <!-- Trip Create/Edit Modal -->
+  <div id="tripModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <section class="modal-card">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Trip Form</p>
+          <h2 id="tripModalTitle">Create Trip</h2>
+        </div>
+
+        <button class="icon-btn" type="button" data-close-trip-modal aria-label="Close trip form">
+          ✕
+        </button>
+      </div>
+
+      <form id="tripForm" novalidate>
+        <input type="hidden" id="tripId" name="tripId" />
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="tripName">Trip Name</label>
+            <input id="tripName" name="tripName" class="form-control" type="text" required />
+            <small class="form-error" data-error-for="tripName"></small>
+          </div>
+
+          <div class="form-group">
+            <label for="destination">Destination</label>
+            <input id="destination" name="destination" class="form-control" type="text" required />
+            <small class="form-error" data-error-for="destination"></small>
+          </div>
+
+          <div class="form-group">
+            <label for="startDate">Start Date</label>
+            <input id="startDate" name="startDate" class="form-control" type="date" required />
+            <small class="form-error" data-error-for="startDate"></small>
+          </div>
+
+          <div class="form-group">
+            <label for="endDate">End Date</label>
+            <input id="endDate" name="endDate" class="form-control" type="date" required />
+            <small class="form-error" data-error-for="endDate"></small>
+          </div>
+
+          <div class="form-group">
+            <label for="currency">Currency</label>
+            <select id="currency" name="currency" class="form-control" required>
+              <option value="INR">INR - Indian Rupee</option>
+              <option value="USD">USD - US Dollar</option>
+              <option value="EUR">EUR - Euro</option>
+              <option value="GBP">GBP - British Pound</option>
+              <option value="AED">AED - UAE Dirham</option>
+            </select>
+            <small class="form-error" data-error-for="currency"></small>
+          </div>
+
+          <div class="form-group form-group-full">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              class="form-control"
+              rows="4"
+              placeholder="Add trip notes, plan, or basic details"
+            ></textarea>
+            <small class="form-error" data-error-for="description"></small>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-light" type="button" data-close-trip-modal>
+            Cancel
+          </button>
+          <button id="saveTripButton" class="btn btn-primary" type="submit">
+            Save Trip
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <!-- Invite Member Modal -->
+  <div id="inviteModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <section class="modal-card small-modal">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Invite Member</p>
+          <h2 id="inviteTripTitle">Send Invitation</h2>
+        </div>
+
+        <button class="icon-btn" type="button" data-close-invite-modal aria-label="Close invite form">
+          ✕
+        </button>
+      </div>
+
+      <form id="inviteForm" novalidate>
+        <input type="hidden" id="inviteTripId" name="inviteTripId" />
+
+        <div class="form-group">
+          <label for="inviteEmail">Member Email</label>
+          <input
+            id="inviteEmail"
+            name="inviteEmail"
+            class="form-control"
+            type="email"
+            placeholder="friend@example.com"
+            required
+          />
+          <small class="form-error" data-error-for="inviteEmail"></small>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-light" type="button" data-close-invite-modal>
+            Cancel
+          </button>
+          <button id="sendInviteButton" class="btn btn-primary" type="submit">
+            Send Invite
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <!-- Trip Detail Modal -->
+  <div id="tripDetailModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <section class="modal-card">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Trip Details</p>
+          <h2 id="detailTripName">Trip</h2>
+        </div>
+
+        <button class="icon-btn" type="button" data-close-detail-modal aria-label="Close trip details">
+          ✕
+        </button>
+      </div>
+
+      <div id="tripDetailBody" class="trip-detail-body">
+        <div class="dashboard-loader">Loading trip details...</div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-dark" type="button" data-close-detail-modal>
+          Close
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <script type="module" src="./js/firebase.js"></script>
+  <script type="module" src="./js/app.js"></script>
+  <script type="module" src="./js/auth.js"></script>
+  <script type="module" src="./js/trip.js"></script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    TripSplit Dashboard
+    Architecture:
+    This is a protected route.
+    auth.js handles route protection and user session dispatch.
+    dashboard.js renders admin/member UI based on Firestore profile role.
+  -->
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Dashboard | TripSplit</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="stylesheet" href="./css/dashboard.css" />
+</head>
+
+<body>
+  <div id="toast-root" class="toast-root"></div>
+
+  <div class="sidebar-overlay"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="./dashboard.html" class="brand">
+          <span class="brand-mark">TS</span>
+          <span class="brand-text">TripSplit</span>
+        </a>
+
+        <button class="icon-btn mobile-only" data-mobile-menu-close>
+          ✕
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="./dashboard.html" class="sidebar-link active" data-nav-link>Dashboard</a>
+        <a href="./trips.html" class="sidebar-link" data-nav-link>Trips</a>
+        <a href="./expenses.html" class="sidebar-link" data-nav-link>Expenses</a>
+        <a href="./settlements.html" class="sidebar-link" data-nav-link>Settlements</a>
+        <a href="./reports.html" class="sidebar-link" data-nav-link>Reports</a>
+        <a href="./settings.html" class="sidebar-link" data-nav-link>Settings</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-dark" data-logout>Logout</button>
+      </div>
+    </aside>
+
+    <main class="dashboard-main">
+      <header class="dashboard-topbar">
+        <button class="icon-btn mobile-only" data-mobile-menu-open>
+          ☰
+        </button>
+
+        <div>
+          <p class="eyebrow">Dashboard</p>
+          <h1>Welcome, <span data-user-name>User</span></h1>
+          <p class="user-meta">
+            <span data-user-email></span> ·
+            <strong data-user-role>member</strong>
+          </p>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="btn btn-light" data-resend-verification>
+            Verify Email
+          </button>
+          <button class="btn btn-dark" data-logout>
+            Logout
+          </button>
+        </div>
+      </header>
+
+      <section id="emailVerificationBanner" class="verification-banner hidden">
+        <strong>Email not verified.</strong>
+        Please verify your email to keep your TripSplit account secure.
+        <button class="btn btn-primary" data-resend-verification>
+          Resend Email
+        </button>
+      </section>
+
+      <section id="dashboardContent">
+        <div class="dashboard-loader">
+          Loading dashboard...
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="./js/firebase.js"></script>
+  <script type="module" src="./js/app.js"></script>
+  <script type="module" src="./js/auth.js"></script>
+  <script type="module" src="./js/dashboard.js"></script>
+</body>
+</html>

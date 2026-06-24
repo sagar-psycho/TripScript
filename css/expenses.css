@@ -1,0 +1,338 @@
+/*
+  TripSplit Expenses Module Styles
+  File: css/expenses.css
+
+  Architecture:
+  Uses global design tokens from style.css and layout patterns from
+  dashboard.css / trips.css. This file only styles expense-specific UI.
+*/
+
+.expenses-main {
+  max-width: 1600px;
+}
+
+.expense-stats {
+  margin-bottom: 24px;
+}
+
+.expense-toolbar {
+  background: var(--color-white);
+  border: var(--border-heavy);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-heavy);
+  padding: 20px;
+  margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: 1fr 220px 220px 220px;
+  gap: 18px;
+}
+
+.expense-toolbar label {
+  display: block;
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.expense-content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.expense-list,
+.approval-list,
+.quick-summary {
+  display: grid;
+  gap: 16px;
+}
+
+.expense-card,
+.approval-card {
+  background: var(--color-white);
+  border: var(--border-heavy);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-heavy);
+  padding: 22px;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.expense-card:hover,
+.approval-card:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 12px 12px 0 var(--color-black);
+}
+
+.expense-card-header,
+.approval-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.expense-card h3,
+.approval-card h3 {
+  font-size: 1.45rem;
+}
+
+.expense-meta {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0;
+  font-weight: 800;
+}
+
+.expense-description {
+  color: var(--color-muted);
+  font-weight: 700;
+}
+
+.expense-actions,
+.approval-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.expense-actions .btn,
+.approval-actions .btn {
+  padding: 10px 13px;
+  font-size: 0.9rem;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  border: var(--border-medium);
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: var(--color-yellow);
+  font-weight: 900;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.status-badge.pending {
+  background: var(--color-yellow);
+}
+
+.status-badge.approved {
+  background: var(--color-white);
+}
+
+.status-badge.rejected {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.amount-pill {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  border: var(--border-medium);
+  border-radius: 999px;
+  background: var(--color-black);
+  color: var(--color-white);
+  padding: 8px 12px;
+  font-weight: 900;
+}
+
+.receipt-preview {
+  margin-top: 14px;
+  border: var(--border-medium);
+  border-radius: var(--radius-md);
+  background: var(--color-yellow);
+  box-shadow: 4px 4px 0 var(--color-black);
+  padding: 14px;
+  font-weight: 900;
+}
+
+.receipt-preview img {
+  max-height: 220px;
+  border: var(--border-medium);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  object-fit: cover;
+}
+
+.receipt-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-weight: 900;
+  text-decoration: underline;
+}
+
+.expense-detail-body {
+  display: grid;
+  gap: 16px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.detail-item {
+  border: var(--border-medium);
+  border-radius: var(--radius-md);
+  background: var(--color-yellow);
+  padding: 14px;
+  font-weight: 900;
+}
+
+.detail-item span {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.detail-description {
+  border: var(--border-medium);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  font-weight: 800;
+  background: var(--color-white);
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.62);
+  z-index: 999;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.modal-card {
+  width: min(760px, 100%);
+  max-height: min(90vh, 900px);
+  overflow: auto;
+  background: var(--color-white);
+  border: var(--border-heavy);
+  border-radius: 24px;
+  box-shadow: 12px 12px 0 var(--color-black);
+  padding: 24px;
+}
+
+.modal-card::-webkit-scrollbar {
+  width: 10px;
+}
+
+.modal-card::-webkit-scrollbar-thumb {
+  background: var(--color-black);
+  border-radius: 999px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+  margin-bottom: 22px;
+}
+
+.modal-header h2 {
+  font-size: 2rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.form-group-full {
+  grid-column: 1 / -1;
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+}
+
+.empty-state,
+.dashboard-loader {
+  background: var(--color-yellow);
+  border: var(--border-medium);
+  border-radius: var(--radius-md);
+  box-shadow: 4px 4px 0 var(--color-black);
+  padding: 18px;
+  font-weight: 900;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 1180px) {
+  .expense-toolbar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .expense-content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 820px) {
+  .expense-toolbar,
+  .form-grid,
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .expense-card-header,
+  .approval-card-header {
+    flex-direction: column;
+  }
+
+  .modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .modal-actions .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .expense-card,
+  .approval-card,
+  .expense-toolbar,
+  .modal-card {
+    box-shadow: 6px 6px 0 var(--color-black);
+  }
+
+  .modal-card {
+    padding: 18px;
+    border-radius: var(--radius-lg);
+  }
+
+  .modal-header h2 {
+    font-size: 1.55rem;
+  }
+
+  .expense-actions,
+  .approval-actions {
+    flex-direction: column;
+  }
+
+  .expense-actions .btn,
+  .approval-actions .btn {
+    width: 100%;
+  }
+}

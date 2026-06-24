@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!--
+    TripSplit Expense Management
+    File: expenses.html
+
+    Architecture:
+    Protected route handled by auth.js.
+    Expense behavior will be handled later by expense.js.
+    This file only defines semantic UI structure and required DOM hooks.
+  -->
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Expenses | TripSplit</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@600;700;800;900&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="stylesheet" href="./css/dashboard.css" />
+  <link rel="stylesheet" href="./css/expenses.css" />
+</head>
+
+<body>
+  <div id="toast-root" class="toast-root"></div>
+  <div class="sidebar-overlay"></div>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="./dashboard.html" class="brand">
+          <span class="brand-mark">TS</span>
+          <span class="brand-text">TripSplit</span>
+        </a>
+
+        <button class="icon-btn mobile-only" data-mobile-menu-close>✕</button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="./dashboard.html" class="sidebar-link" data-nav-link>Dashboard</a>
+        <a href="./trips.html" class="sidebar-link" data-nav-link>Trips</a>
+        <a href="./expenses.html" class="sidebar-link active" data-nav-link>Expenses</a>
+        <a href="./settlements.html" class="sidebar-link" data-nav-link>Settlements</a>
+        <a href="./reports.html" class="sidebar-link" data-nav-link>Reports</a>
+        <a href="./settings.html" class="sidebar-link" data-nav-link>Settings</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-dark" data-logout>Logout</button>
+      </div>
+    </aside>
+
+    <main class="dashboard-main expenses-main">
+      <header class="dashboard-topbar">
+        <button class="icon-btn mobile-only" data-mobile-menu-open>☰</button>
+
+        <div>
+          <p class="eyebrow">Expense Management</p>
+          <h1>Expenses</h1>
+          <p class="user-meta">
+            <span data-user-name>User</span> ·
+            <span data-user-email></span> ·
+            <strong data-user-role>member</strong>
+          </p>
+        </div>
+
+        <div class="topbar-actions">
+          <button id="addExpenseButton" class="btn btn-primary member-only" data-open-expense-modal>
+            + Add Expense
+          </button>
+          <button class="btn btn-dark" data-logout>Logout</button>
+        </div>
+      </header>
+
+      <section class="dashboard-grid expense-stats" id="expenseStats">
+        <article class="stat-card">
+          <span>Total Expenses</span>
+          <strong id="totalExpensesValue">₹0</strong>
+        </article>
+
+        <article class="stat-card">
+          <span>Pending</span>
+          <strong id="pendingExpensesValue">0</strong>
+        </article>
+
+        <article class="stat-card">
+          <span>Approved</span>
+          <strong id="approvedExpensesValue">0</strong>
+        </article>
+
+        <article class="stat-card">
+          <span>Rejected</span>
+          <strong id="rejectedExpensesValue">0</strong>
+        </article>
+      </section>
+
+      <section class="expense-toolbar">
+        <div class="expense-search-wrap">
+          <label for="expenseSearch">Search</label>
+          <input
+            id="expenseSearch"
+            class="form-control"
+            type="search"
+            placeholder="Search expense name, category, trip, or payer"
+          />
+        </div>
+
+        <div>
+          <label for="expenseTripFilter">Trip</label>
+          <select id="expenseTripFilter" class="form-control">
+            <option value="all">All Trips</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="expenseCategoryFilter">Category</label>
+          <select id="expenseCategoryFilter" class="form-control">
+            <option value="all">All Categories</option>
+            <option value="Food">Food</option>
+            <option value="Travel">Travel</option>
+            <option value="Hotel">Hotel</option>
+            <option value="Fuel">Fuel</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Activities">Activities</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="expenseStatusFilter">Status</label>
+          <select id="expenseStatusFilter" class="form-control">
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+      </section>
+
+      <section id="approvalQueueSection" class="panel-card admin-only hidden">
+        <div class="section-inline-heading">
+          <div>
+            <h2>Approval Queue</h2>
+            <p>Review member submitted expenses before settlement.</p>
+          </div>
+        </div>
+
+        <div id="approvalQueue" class="approval-list">
+          <div class="empty-state">No pending expenses for approval.</div>
+        </div>
+      </section>
+
+      <section class="expense-content-grid">
+        <div>
+          <div class="section-inline-heading">
+            <div>
+              <h2 id="expenseListTitle">Expense List</h2>
+              <p id="expenseListSubtitle">Track trip expenses and approval status.</p>
+            </div>
+          </div>
+
+          <div id="expenseList" class="expense-list">
+            <div class="dashboard-loader">Loading expenses...</div>
+          </div>
+        </div>
+
+        <aside class="panel-card">
+          <h2>Quick Summary</h2>
+          <div id="expenseQuickSummary" class="quick-summary">
+            <div class="empty-state">Expense summary will appear here.</div>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <div id="expenseModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <section class="modal-card">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Expense Form</p>
+          <h2 id="expenseModalTitle">Add Expense</h2>
+        </div>
+
+        <button class="icon-btn" type="button" data-close-expense-modal>✕</button>
+      </div>
+
+      <form id="expenseForm" novalidate>
+        <input type="hidden" id="expenseId" name="expenseId" />
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="expenseName">Expense Name</label>
+            <input id="expenseName" name="expenseName" class="form-control" type="text" required />
+            <small class="form-error" data-error-for="expenseName"></small>
+          </div>
+
+          <div class="form-group">
+            <label for="amount">Amount</label>
+            <input id="amount" name="amount" class="form-control" type="number" min="1" step="0.01" required />
+            <small class="form-error" data-error-for="amount"></small>
+          </div>
+
+          <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" name="category" class="form-control" required>
+              <option value="">Select Category</option>
+              <option value="Food">Food</option>
+              <option value="Travel">Travel</option>
+              <option value="Hotel">Hotel</option>
+              <option value="Fuel">Fuel</option>
+              <option value="Shopping">Shopping</option>
+              <option value="Activities">Activities</option>
+              <option value="Other">Other</option>
+            </select>
+            <small class="form-error" data-error-for="category"></small>
+          </div>
+
+          <div class="form-group">
+            <label for="tripId">Trip</label>
+            <select id="tripId" name="tripId" class="form-control" required>
+              <option value="">Select Trip</option>
+            </select>
+            <small class="form-error" data-error-for="tripId"></small>
+          </div>
+
+          <div class="form-group">
+            <label for="paidBy">Paid By</label>
+            <input id="paidBy" name="paidBy" class="form-control" type="text" readonly />
+            <small class="form-error" data-error-for="paidBy"></small>
+          </div>
+
+          <div class="form-group">
+            <label for="expenseDate">Date</label>
+            <input id="expenseDate" name="expenseDate" class="form-control" type="date" required />
+            <small class="form-error" data-error-for="expenseDate"></small>
+          </div>
+
+          <div class="form-group form-group-full">
+            <label for="receiptUpload">Receipt Upload</label>
+            <input id="receiptUpload" name="receiptUpload" class="form-control" type="file" accept="image/*,.pdf" />
+            <small class="form-error" data-error-for="receiptUpload"></small>
+            <div id="receiptPreview" class="receipt-preview hidden"></div>
+          </div>
+
+          <div class="form-group form-group-full">
+            <label for="expenseDescription">Description</label>
+            <textarea
+              id="expenseDescription"
+              name="expenseDescription"
+              class="form-control"
+              rows="4"
+              placeholder="Add notes about this expense"
+            ></textarea>
+            <small class="form-error" data-error-for="expenseDescription"></small>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-light" type="button" data-close-expense-modal>Cancel</button>
+          <button id="saveExpenseButton" class="btn btn-primary" type="submit">Submit Expense</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <div id="expenseDetailModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <section class="modal-card">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Expense Details</p>
+          <h2 id="detailExpenseName">Expense</h2>
+        </div>
+
+        <button class="icon-btn" type="button" data-close-expense-detail-modal>✕</button>
+      </div>
+
+      <div id="expenseDetailBody" class="expense-detail-body">
+        <div class="dashboard-loader">Loading expense details...</div>
+      </div>
+
+      <div id="expenseApprovalActions" class="modal-actions admin-only hidden">
+        <button id="rejectExpenseButton" class="btn btn-light" type="button" data-reject-expense>
+          Reject
+        </button>
+        <button id="approveExpenseButton" class="btn btn-primary" type="button" data-approve-expense>
+          Approve
+        </button>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-dark" type="button" data-close-expense-detail-modal>Close</button>
+      </div>
+    </section>
+  </div>
+
+  <script type="module" src="./js/firebase.js"></script>
+  <script type="module" src="./js/app.js"></script>
+  <script type="module" src="./js/auth.js"></script>
+  <script type="module" src="./js/expense.js"></script>
+</body>
+</html>

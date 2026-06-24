@@ -1,0 +1,7 @@
+function loadComponents(){
+ const templates={sidebar:`<aside class="sidebar"><a class="logo" href="dashboard.html"><span class="logo-badge">TS</span><span class="logo-text">TripSplit</span></a><nav><a class="side-link" href="dashboard.html">🏠 <span class="label">Dashboard</span></a><a class="side-link" href="trips.html">🧳 <span class="label">Trips</span></a><a class="side-link" href="expenses.html">💸 <span class="label">Expenses</span></a><a class="side-link" href="settlements.html">🤝 <span class="label">Settlements</span></a><a class="side-link" href="reports.html">📊 <span class="label">Reports</span></a><a class="side-link" href="settings.html">⚙️ <span class="label">Settings</span></a></nav></aside>`,topbar:`<header class="topbar"><input id="searchInput" class="input search" placeholder="Search trips, expenses, members..."><div class="toolbar"><button class="btn" id="themeToggle">🌓</button><button class="btn">🔔</button><div class="avatar" data-avatar>DU</div><b data-user>Demo User</b><button class="btn logout">Logout</button></div></header>`};
+ document.querySelectorAll('[data-component]').forEach(el=>el.innerHTML=templates[el.dataset.component]||'');
+ document.querySelectorAll('.side-link').forEach(a=>{if(location.pathname.endsWith(a.getAttribute('href')))a.classList.add('active')});
+ document.dispatchEvent(new Event('components-ready'));
+}
+document.addEventListener('DOMContentLoaded',loadComponents);
